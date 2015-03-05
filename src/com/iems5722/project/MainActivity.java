@@ -12,6 +12,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -22,7 +23,7 @@ public class MainActivity extends Activity {
 	
 	private Button button;
 	private TextView textView;
-	private String serverUrl = "http://54.169.108.112:3000/";
+	private String serverUrl = "http://52.11.116.247:3000/";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +76,11 @@ public class MainActivity extends Activity {
 		    protected void onPostExecute( String targetUrl) {
 		        super.onPostExecute(targetUrl);
 		        textView = (TextView) findViewById(R.id.targetUrl);
-		        textView.setText(targetUrl);
+		        textView.setText("you will connect to -- " + targetUrl);
+		        
+		        Intent myIntent = new Intent(MainActivity.this, ChatActivity.class);
+		        myIntent.putExtra("targetUrl", targetUrl); //Optional parameters
+		        MainActivity.this.startActivity(myIntent);
 		    }
 			
 		}.execute(null, null, null);
