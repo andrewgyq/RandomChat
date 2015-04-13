@@ -1,9 +1,20 @@
 package com.iems5722.project;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -12,14 +23,18 @@ import com.github.nkzawa.emitter.Emitter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
+import android.view.ViewConfiguration;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class ChatActivity extends Activity {
 	
@@ -81,13 +96,15 @@ public class ChatActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-		setContentView(R.layout.activity_chat);
-		//getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebtn);  
+        setContentView(R.layout.activity_chat);
+        // show overflow button
+        setOverflowButtonAlways();
+        // hide app icon
+		getActionBar().setDisplayShowHomeEnabled(false);
+		
 		activity = this;
 		Intent intent = getIntent();
 		nickName = intent.getStringExtra("nickname");
-		
 		
 		button = (Button) findViewById(R.id.Button);
 		button.setOnClickListener(new OnClickListener() {
@@ -135,6 +152,85 @@ public class ChatActivity extends Activity {
 
 	    mSocket.disconnect();
 	    mSocket.off("new message", onNewMessage);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu){
+		getMenuInflater().inflate(R.menu.chat, menu);
+		return true;
+	}
+	
+	public boolean onOptionsItemSelected (MenuItem item){
+		switch(item.getItemId()){  
+        case R.id.action_private_chat:  
+            startPrivateChat();
+            break;  
+        case R.id.action_exit:  
+            Toast.makeText(this, "exit", Toast.LENGTH_SHORT).show();  
+            break;  
+        }  
+        return true;
+	}
+	
+	private void startPrivateChat() {
+		new AsyncTask< Void, Void, String>(){
+
+			@Override
+			protected String doInBackground(Void... params) {
+				HttpClient client = new DefaultHttpClient();
+				
+				HttpGet request = new HttpGet("http://52.74.25.92:3000/private");
+				HttpResponse response = null;
+				try {
+					response = client.execute(request);
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				HttpEntity entity = response.getEntity();
+				
+				String targetUrl = null;
+				try {
+					targetUrl = EntityUtils.toString(entity);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return targetUrl;
+			}
+			
+			@Override
+		    protected void onPostExecute( String targetUrl) {
+		        super.onPostExecute(targetUrl);
+		        // get response from server
+		       if(targetUrl == "false"){
+		    	   
+		       }else{
+		    	   	Intent myIntent = new Intent(ChatActivity.this, PrivateChatActivity.class);
+			       	myIntent.putExtra("targetUrl", targetUrl);
+			       	ChatActivity.this.startActivity(myIntent);
+		       }
+		    }
+			
+		}.execute(null, null, null);
+		
+	}
+
+	private void setOverflowButtonAlways(){
+		try
+		{
+			ViewConfiguration config = ViewConfiguration.get(this);
+			Field menuKey = ViewConfiguration.class
+					.getDeclaredField("sHasPermanentMenuKey");
+			menuKey.setAccessible(true);
+			menuKey.setBoolean(config, false);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 }

@@ -7,6 +7,11 @@
     -->
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- API 14 theme customizations can go here. -->
+        <item name="android:actionOverflowButtonStyle">@style/randomchatActionOverflowButtonStyle</item>
+    </style>
+    
+    <style name="randomchatActionOverflowButtonStyle">
+        <item name="android:src">@drawable/actionbar_add_icon</item>
     </style>
 
 </resources>

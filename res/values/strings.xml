@@ -8,5 +8,9 @@
     <string name="nickname">input your nickname</string>
     <string name="title_activity_chat">ChatActivity</string>
     <string name="send_button">Send</string>
+    <string name="action_add">Add</string>
+    <string name="menu_private_chat">Private Chat</string>
+    <string name="menu_exit">Exit</string>
+    <string name="title_activity_private_chat">PrivateChatActivity</string>
 
 </resources>
