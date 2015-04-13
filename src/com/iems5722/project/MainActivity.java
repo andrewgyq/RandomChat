@@ -15,15 +15,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
 	private Button button;
-	private TextView textView;
-	private String serverUrl = "http://52.11.116.247:3000/";
+	private EditText editText;
+	private String serverUrl = "http://52.74.25.92:3000/";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,18 +33,24 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		button = (Button) findViewById(R.id.button);
+		editText = (EditText) findViewById(R.id.nickname);
 		
 		button.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
-		    	findMatchingUser();
+		    	String nickname = editText.getText().toString().trim();
+		    	if (TextUtils.isEmpty(nickname)) {
+		    		Toast.makeText(MainActivity.this, "Please input your nickname!", Toast.LENGTH_LONG).show();
+			        return;
+			    }  
+		    	connectServer();
 		    }
 
 		});
 	}
 	
 	
-	protected void findMatchingUser() {
+	protected void connectServer() {
 		new AsyncTask< Void, Void, String>(){
 
 			@Override
@@ -75,11 +83,9 @@ public class MainActivity extends Activity {
 			@Override
 		    protected void onPostExecute( String targetUrl) {
 		        super.onPostExecute(targetUrl);
-		        textView = (TextView) findViewById(R.id.targetUrl);
-		        textView.setText("you will connect to -- " + targetUrl);
 		        
 		        Intent myIntent = new Intent(MainActivity.this, ChatActivity.class);
-		        myIntent.putExtra("targetUrl", targetUrl); //Optional parameters
+		        myIntent.putExtra("nickname", editText.getText().toString().trim());
 		        MainActivity.this.startActivity(myIntent);
 		    }
 			
