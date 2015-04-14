@@ -192,11 +192,12 @@ public class ChatActivity extends Activity {
 				HttpResponse response = null;
 				String targetUrl = "";
 				int requestCount = 0;
+				HttpClient client = new DefaultHttpClient();
+				HttpGet request = new HttpGet("http://52.74.25.92:3000/private");
+				
 				while("false".equals(targetUrl.trim()) || targetUrl == ""){
 					requestCount = requestCount + 1;
-					HttpClient client = new DefaultHttpClient();
 					
-					HttpGet request = new HttpGet("http://52.74.25.92:3000/private");
 					try {
 						response = client.execute(request);
 					} catch (ClientProtocolException e) {
@@ -210,7 +211,7 @@ public class ChatActivity extends Activity {
 					try {
 						targetUrl = EntityUtils.toString(entity);
 						Thread.sleep(1000);
-						if(requestCount == 10)
+						if(requestCount == 5)
 							break;
 						
 					} catch (ParseException e) {
@@ -233,6 +234,7 @@ public class ChatActivity extends Activity {
 		        }
 	    	   	Intent myIntent = new Intent(ChatActivity.this, P2PChatActivity.class);
 		       	myIntent.putExtra("targetUrl", targetUrl);
+		       	myIntent.putExtra("nickname", nickName);
 		       	ChatActivity.this.startActivity(myIntent);
 		    }
 			
