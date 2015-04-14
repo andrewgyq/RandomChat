@@ -22,6 +22,7 @@ import com.github.nkzawa.emitter.Emitter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -60,9 +61,18 @@ public class ChatActivity extends Activity {
 	             public void run() {
 	    			chatView = (ListView) findViewById(R.id.ChatView);
 	    			String date = getDate();
-    		    	int receiveLayout = R.layout.receiver_layout;  
-    		        ChatMessage receiveMessage = new ChatMessage(date, (String)args[0], receiveLayout);  
-    		        list.add(receiveMessage);
+	    			String message = (String) args[0];
+	    			ChatMessage chatMessage = null;
+    		    	if(nickName.equals(message.split(":")[0])){
+    		    		chatMessage = new ChatMessage(date, 
+        		        		(String)args[0], R.layout.sender_layout); 
+    		    	}
+    		    	else{
+    		    		chatMessage = new ChatMessage(date, 
+        		        		(String)args[0], R.layout.receiver_layout);
+    		    	}
+    		    			 
+    		        list.add(chatMessage);
     		        chatView.setAdapter(new ChatMessageViewAdapter(ChatActivity.this,list)); 
 	    		 }
 	    	});
@@ -75,7 +85,7 @@ public class ChatActivity extends Activity {
 	    	activity.runOnUiThread(new Runnable() {
 	    		 @Override
 	             public void run() {
-	    			 activity.setTitle(nickName + "  online user: " + args[0]);
+	    			 activity.setTitle("Online User: " + args[0]);
 	    		 }
 	    	});
 	    }
@@ -87,7 +97,7 @@ public class ChatActivity extends Activity {
 	    	activity.runOnUiThread(new Runnable() {
 	    		 @Override
 	             public void run() {
-	    			 activity.setTitle(nickName + "  online user: " + args[0]);
+	    			 activity.setTitle("Online User: " + args[0]);
 	    		 }
 	    	});
 	    }
@@ -130,13 +140,8 @@ public class ChatActivity extends Activity {
 	        return;
 	    }  
 				
-//		int sendLayout = R.layout.sender_layout;  
-//		ChatMessage sendMessage = new ChatMessage(date, message, sendLayout);  
-//        list.add(sendMessage);  
-//        
-//        chatView.setAdapter(new ChatMessageViewAdapter(ChatActivity.this,list));  
         editText.setText("");  
-        mSocket.emit("new message", message);
+        mSocket.emit("new message", nickName + ": " + message);
 	}
 
 	@SuppressLint("SimpleDateFormat")
@@ -174,45 +179,61 @@ public class ChatActivity extends Activity {
 	
 	private void startPrivateChat() {
 		new AsyncTask< Void, Void, String>(){
-
+			ProgressDialog dialog = new ProgressDialog(activity);
+			
+			@Override
+		    protected void onPreExecute() {
+		        dialog.setMessage("Matching, please wait!");
+		        dialog.show();
+		    }
+			
 			@Override
 			protected String doInBackground(Void... params) {
-				HttpClient client = new DefaultHttpClient();
-				
-				HttpGet request = new HttpGet("http://52.74.25.92:3000/private");
 				HttpResponse response = null;
-				try {
-					response = client.execute(request);
-				} catch (ClientProtocolException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
+				String targetUrl = "";
+				int requestCount = 0;
+				while("false".equals(targetUrl.trim()) || targetUrl == ""){
+					requestCount = requestCount + 1;
+					HttpClient client = new DefaultHttpClient();
+					
+					HttpGet request = new HttpGet("http://52.74.25.92:3000/private");
+					try {
+						response = client.execute(request);
+					} catch (ClientProtocolException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
+					HttpEntity entity = response.getEntity();
+					
+					try {
+						targetUrl = EntityUtils.toString(entity);
+						Thread.sleep(1000);
+						if(requestCount == 10)
+							break;
+						
+					} catch (ParseException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 				
-				HttpEntity entity = response.getEntity();
-				
-				String targetUrl = null;
-				try {
-					targetUrl = EntityUtils.toString(entity);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 				return targetUrl;
 			}
 			
 			@Override
 		    protected void onPostExecute( String targetUrl) {
 		        super.onPostExecute(targetUrl);
-		        // get response from server
-		       if(targetUrl == "false"){
-		    	   
-		       }else{
-		    	   	Intent myIntent = new Intent(ChatActivity.this, PrivateChatActivity.class);
-			       	myIntent.putExtra("targetUrl", targetUrl);
-			       	ChatActivity.this.startActivity(myIntent);
-		       }
+		        if (dialog.isShowing()) {
+		            dialog.dismiss();
+		        }
+	    	   	Intent myIntent = new Intent(ChatActivity.this, P2PChatActivity.class);
+		       	myIntent.putExtra("targetUrl", targetUrl);
+		       	ChatActivity.this.startActivity(myIntent);
 		    }
 			
 		}.execute(null, null, null);

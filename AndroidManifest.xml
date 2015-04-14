@@ -33,6 +33,10 @@
             android:name=".PrivateChatActivity"
             android:label="@string/title_activity_private_chat" >
         </activity>
+        <activity
+            android:name=".P2PChatActivity"
+            android:label="@string/title_activity_p2_pchat" >
+        </activity>
     </application>
 
 </manifest>

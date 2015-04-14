@@ -30,26 +30,29 @@ public final class R {
         public static final int ChatView=0x7f080000;
         public static final int EditText=0x7f080002;
         public static final int LinearLayout=0x7f080001;
-        public static final int action_exit=0x7f08000a;
-        public static final int action_private_chat=0x7f080009;
-        public static final int action_settings=0x7f08000b;
+        public static final int P2PButton=0x7f080008;
+        public static final int P2PEditText=0x7f080007;
+        public static final int action_exit=0x7f08000b;
+        public static final int action_private_chat=0x7f08000a;
+        public static final int action_settings=0x7f08000c;
         public static final int button=0x7f080005;
-        public static final int messagedetail_row_date=0x7f080007;
-        public static final int messagedetail_row_text=0x7f080008;
+        public static final int messagedetail_row_text=0x7f080009;
         public static final int nickname=0x7f080004;
         public static final int targetUrl=0x7f080006;
     }
     public static final class layout {
         public static final int activity_chat=0x7f030000;
         public static final int activity_main=0x7f030001;
-        public static final int activity_private_chat=0x7f030002;
-        public static final int receiver_layout=0x7f030003;
-        public static final int sender_layout=0x7f030004;
+        public static final int activity_p2p_chat=0x7f030002;
+        public static final int activity_private_chat=0x7f030003;
+        public static final int receiver_layout=0x7f030004;
+        public static final int sender_layout=0x7f030005;
     }
     public static final class menu {
         public static final int chat=0x7f070000;
         public static final int main=0x7f070001;
-        public static final int private_chat=0x7f070002;
+        public static final int p2_pchat=0x7f070002;
+        public static final int private_chat=0x7f070003;
     }
     public static final class string {
         public static final int action_add=0x7f050007;
@@ -62,6 +65,7 @@ public final class R {
         public static final int nickname=0x7f050004;
         public static final int send_button=0x7f050006;
         public static final int title_activity_chat=0x7f050005;
+        public static final int title_activity_p2_pchat=0x7f05000b;
         public static final int title_activity_private_chat=0x7f05000a;
     }
     public static final class style {

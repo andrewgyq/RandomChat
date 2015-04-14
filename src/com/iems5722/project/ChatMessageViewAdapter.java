@@ -1,7 +1,7 @@
 package com.iems5722.project;
 
 import java.util.ArrayList;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +20,8 @@ public class ChatMessageViewAdapter extends BaseAdapter {
         this.list =  list;  
     }  
     
-    @Override  
+    @SuppressLint("ViewHolder")
+	@Override  
     public View getView(int position, View convertView, ViewGroup parent) {  
     	ChatMessage chatMessage = list.get(position);  
         int itemlayout = chatMessage.getLayoutId();  
@@ -29,8 +30,6 @@ public class ChatMessageViewAdapter extends BaseAdapter {
         LayoutInflater  vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);  
         vi.inflate(itemlayout, layout, true);  
         
-        TextView tvDate  =(TextView) layout.findViewById(R.id.messagedetail_row_date);  
-        tvDate.setText(chatMessage.getDate());  
         TextView  tvText  =(TextView) layout.findViewById(R.id.messagedetail_row_text);  
         tvText.setText(chatMessage.getMessage());  
         return layout;  

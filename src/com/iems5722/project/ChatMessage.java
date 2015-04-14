@@ -1,6 +1,7 @@
 package com.iems5722.project;
 
 public class ChatMessage {
+	private String nickname;
 	private String date;
 	private String message;
 	private int layoutId;
@@ -10,6 +11,16 @@ public class ChatMessage {
 		this.message = message;
 		this.layoutId = layoutId;
 	}
+	
+	public String getNickname() {
+		return nickname;
+	}
+
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
 
 	public String getDate() {
 		return date;
