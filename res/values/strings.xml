@@ -13,5 +13,6 @@
     <string name="menu_exit">Exit</string>
     <string name="title_activity_private_chat">PrivateChatActivity</string>
     <string name="title_activity_p2_pchat">P2PChatActivity</string>
+    <string name="menu_about">About</string>
 
 </resources>

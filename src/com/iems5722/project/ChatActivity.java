@@ -141,7 +141,13 @@ public class ChatActivity extends Activity {
 	    }  
 				
         editText.setText("");  
-        mSocket.emit("new message", nickName + ": " + message);
+        String date = getDate();
+        StringBuffer sb = new StringBuffer(nickName);
+        sb.append(" (");
+        sb.append(date);
+        sb.append(") : ");
+        sb.append(message);
+        mSocket.emit("new message", sb.toString());
 	}
 
 	@SuppressLint("SimpleDateFormat")
@@ -171,10 +177,15 @@ public class ChatActivity extends Activity {
             startPrivateChat();
             break;  
         case R.id.action_exit:  
-            Toast.makeText(this, "exit", Toast.LENGTH_SHORT).show();  
+        	exit();
             break;  
         }  
         return true;
+	}
+	
+	private void exit(){
+		activity.finish();
+		onDestroy();
 	}
 	
 	private void startPrivateChat() {
@@ -211,8 +222,8 @@ public class ChatActivity extends Activity {
 					try {
 						targetUrl = EntityUtils.toString(entity);
 						Thread.sleep(1000);
-						if(requestCount == 5)
-							break;
+						if(requestCount == 10)
+							return "false";
 						
 					} catch (ParseException e) {
 						e.printStackTrace();
@@ -232,6 +243,11 @@ public class ChatActivity extends Activity {
 		        if (dialog.isShowing()) {
 		            dialog.dismiss();
 		        }
+		        if("false".equals(targetUrl)){
+		        	Toast.makeText(activity, "No one can match!", Toast.LENGTH_LONG).show();
+		        	return;
+		        }
+		        
 	    	   	Intent myIntent = new Intent(ChatActivity.this, P2PChatActivity.class);
 		       	myIntent.putExtra("targetUrl", targetUrl);
 		       	myIntent.putExtra("nickname", nickName);
@@ -243,15 +259,13 @@ public class ChatActivity extends Activity {
 	}
 
 	private void setOverflowButtonAlways(){
-		try
-		{
+		try{
 			ViewConfiguration config = ViewConfiguration.get(this);
 			Field menuKey = ViewConfiguration.class
 					.getDeclaredField("sHasPermanentMenuKey");
 			menuKey.setAccessible(true);
 			menuKey.setBoolean(config, false);
-		} catch (Exception e)
-		{
+		} catch (Exception e){
 			e.printStackTrace();
 		}
 	}
