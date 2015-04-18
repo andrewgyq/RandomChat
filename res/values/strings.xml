@@ -7,12 +7,19 @@
     <string name="button_name">Start Chat</string>
     <string name="nickname">input your nickname</string>
     <string name="title_activity_chat">ChatActivity</string>
-    <string name="send_button">Send</string>
+    <string name="send_button">go</string>
+    <string name="emoji_button">emo</string>
+    <string name="image_button">img</string>
     <string name="action_add">Add</string>
     <string name="menu_private_chat">Private Chat</string>
     <string name="menu_exit">Exit</string>
     <string name="title_activity_private_chat">PrivateChatActivity</string>
     <string name="title_activity_p2_pchat">P2PChatActivity</string>
     <string name="menu_about">About</string>
+    <string name="about">IEMS 5722 Project</string>
+    <string name="member1">1155051858 GU Yuqing</string>
+    <string name="member2">1155057008 XIE Wen</string>
+    <string name="member3">1155060483 HUANG He</string>
+    <string name="github">GitHub: https://github.com/andrewgyq/RandomChat</string>
 
 </resources>

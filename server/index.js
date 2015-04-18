@@ -49,6 +49,11 @@ io.on('connection', function(socket){
   		io.emit('new message', msg);
 	});
 
+	socket.on('new image', function(msg){
+		console.log(msg);
+  		io.emit('new image', msg);
+	});
+
   	socket.on('disconnect', function(){ 
   		connectCounter--;
 		var disconnectIP = socket.handshake.address;

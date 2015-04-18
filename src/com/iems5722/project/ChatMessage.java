@@ -1,33 +1,34 @@
 package com.iems5722.project;
 
+import android.graphics.Bitmap;
+
 public class ChatMessage {
-	private String nickname;
-	private String date;
+	private String title;
 	private String message;
 	private int layoutId;
+	private Bitmap bitMap;
 	
-	public ChatMessage(String date, String message, int layoutId){
-		this.date = date;
+	public ChatMessage(String title, String message, Bitmap bitMap, int layoutId){
+		this.title = title;
 		this.message = message;
+		this.bitMap = bitMap;
 		this.layoutId = layoutId;
 	}
 	
-	public String getNickname() {
-		return nickname;
+	public Bitmap getBitMap() {
+		return bitMap;
 	}
 
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
+	public void setBitMap(Bitmap bitMap) {
+		this.bitMap = bitMap;
 	}
 
-
-	public String getDate() {
-		return date;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setDate(String date) {
-		this.date = date;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public String getMessage() {

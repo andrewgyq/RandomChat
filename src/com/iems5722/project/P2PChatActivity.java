@@ -69,7 +69,7 @@ public class P2PChatActivity extends Activity {
         editText.setText("");  
         chatView = (ListView) findViewById(R.id.ChatView);
 		String date = getDate();
-		ChatMessage chatMessage = new ChatMessage(date, message, R.layout.sender_layout); 
+		ChatMessage chatMessage = new ChatMessage(date, message, null, R.layout.sender_layout); 
         list.add(chatMessage);
         chatView.setAdapter(new ChatMessageViewAdapter(P2PChatActivity.this,list)); 
         mSocket.emit("private", message);
@@ -91,7 +91,7 @@ public class P2PChatActivity extends Activity {
 	    			chatView = (ListView) findViewById(R.id.ChatView);
 	    			String date = getDate();
 	    			String message = (String) args[0];
-	    			ChatMessage chatMessage = new ChatMessage(date, message, R.layout.receiver_layout);
+	    			ChatMessage chatMessage = new ChatMessage(date, message, null, R.layout.receiver_layout);
     		        list.add(chatMessage);
     		        chatView.setAdapter(new ChatMessageViewAdapter(P2PChatActivity.this,list));
 	    		 }

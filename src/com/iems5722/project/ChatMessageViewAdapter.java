@@ -1,12 +1,14 @@
 package com.iems5722.project;
 
 import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,8 +32,22 @@ public class ChatMessageViewAdapter extends BaseAdapter {
         LayoutInflater  vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);  
         vi.inflate(itemlayout, layout, true);  
         
-        TextView  tvText  =(TextView) layout.findViewById(R.id.messagedetail_row_text);  
-        tvText.setText(chatMessage.getMessage());  
+        TextView  title  = (TextView) layout.findViewById(R.id.messagedetail_row_title);
+        title.setText(chatMessage.getTitle());
+        
+        TextView  message  =(TextView) layout.findViewById(R.id.messagedetail_row_text);
+        if(chatMessage.getMessage() != null){
+        	message.setText(chatMessage.getMessage()); 
+        }else{
+        	message.setVisibility(View.GONE);
+        }
+        
+        ImageView  imageView  =(ImageView) layout.findViewById(R.id.messagedetail_row_image);
+        if(chatMessage.getBitMap() != null){
+        	imageView.setImageBitmap(chatMessage.getBitMap());
+        }else{
+        	imageView.setVisibility(View.GONE);
+        }
         return layout;  
     }
 

@@ -140,9 +140,6 @@ public class MainActivity extends Activity {
 	
 	public boolean onOptionsItemSelected (MenuItem item){
 		switch(item.getItemId()){  
-        case R.id.action_about:  
-        	Toast.makeText(MainActivity.this, "About", Toast.LENGTH_LONG).show();
-            break;  
         case R.id.action_exit:  
         	activity.finish();
             break;  

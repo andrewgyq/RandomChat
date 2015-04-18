@@ -13,8 +13,7 @@
 	    android:id="@+id/LinearLayout" 
 		android:orientation="horizontal"
 		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:layout_weight="0">
+		android:layout_height="wrap_content">
 
 	<EditText 
 	    android:id="@+id/P2PEditText" 
@@ -22,7 +21,25 @@
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
 		android:hint="" />
-
+	
+	<!-- <Button 
+		android:id="@+id/p2pemoji" 
+		android:text="@string/emoji_button" 
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:gravity="center_vertical|center_horizontal"
+		android:background="@drawable/image_button"
+		android:layout_weight="0" /> -->
+	
+	<Button 
+		android:id="@+id/p2pimage"
+		android:text="@string/image_button" 
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:gravity="center_vertical|center_horizontal"
+		android:background="@drawable/image_button"
+		android:layout_weight="0" />
+	
 	<Button 
 	    android:text="@string/send_button" 
 		android:id="@+id/P2PButton" 

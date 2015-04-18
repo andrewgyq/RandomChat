@@ -1,5 +1,6 @@
 package com.iems5722.project;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URISyntaxException;
@@ -23,10 +24,16 @@ import com.github.nkzawa.emitter.Emitter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,11 +47,13 @@ import android.widget.Toast;
 public class ChatActivity extends Activity {
 	
 	private Button button;
+	private Button imageButton;
 	private EditText editText;
 	private ListView  chatView;
 	private Activity  activity;
 	private ArrayList<ChatMessage>  list = new ArrayList<ChatMessage>();
 	private String nickName;
+	private static final int CAMERA_SELECT = 1;
 	
 	private Socket mSocket;
 	{
@@ -60,20 +69,45 @@ public class ChatActivity extends Activity {
 	    		 @Override
 	             public void run() {
 	    			chatView = (ListView) findViewById(R.id.ChatView);
-	    			String date = getDate();
+	    			StringBuffer sb = new StringBuffer(nickName);
+	    			sb.append(" (");
+	    			sb.append(getDate());
+	    			sb.append("): ");
 	    			String message = (String) args[0];
 	    			ChatMessage chatMessage = null;
     		    	if(nickName.equals(message.split(":")[0])){
-    		    		chatMessage = new ChatMessage(date, 
-        		        		(String)args[0], R.layout.sender_layout); 
+    		    		chatMessage = new ChatMessage(sb.toString(), 
+    		    				message.split(":")[1], null, R.layout.sender_layout); 
     		    	}
     		    	else{
-    		    		chatMessage = new ChatMessage(date, 
-        		        		(String)args[0], R.layout.receiver_layout);
+    		    		chatMessage = new ChatMessage(sb.toString(), 
+    		    				message.split(":")[1], null, R.layout.receiver_layout);
     		    	}
     		    			 
     		        list.add(chatMessage);
     		        chatView.setAdapter(new ChatMessageViewAdapter(ChatActivity.this,list)); 
+	    		 }
+	    	});
+	    }
+	};
+	
+	private Emitter.Listener onNewImage = new Emitter.Listener() {
+	    @Override
+	    public void call(final Object... args) {
+	    	activity.runOnUiThread(new Runnable() {
+	    		 @Override
+	             public void run() {
+	    			 chatView = (ListView) findViewById(R.id.ChatView);
+	    			 StringBuffer sb = new StringBuffer(nickName);
+	    			 sb.append(" (");
+	    			 sb.append(getDate());
+	    			 sb.append("): ");
+	    			 byte[] imageByte = Base64.decode((String)args[0], Base64.DEFAULT);
+	    			 Bitmap bitmap = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length);
+	    			 ChatMessage chatMessage = new ChatMessage(sb.toString(), 
+     		        		null, bitmap, R.layout.sender_layout); ;
+	    		     list.add(chatMessage);
+	    		     chatView.setAdapter(new ChatMessageViewAdapter(ChatActivity.this,list)); 
 	    		 }
 	    	});
 	    }
@@ -116,6 +150,14 @@ public class ChatActivity extends Activity {
 		Intent intent = getIntent();
 		nickName = intent.getStringExtra("nickname");
 		
+		imageButton = (Button) findViewById(R.id.image);
+		imageButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				sendImage();
+			}
+		});
+		
 		button = (Button) findViewById(R.id.Button);
 		button.setOnClickListener(new OnClickListener() {
 			@Override
@@ -125,6 +167,7 @@ public class ChatActivity extends Activity {
 		});
 		
 		mSocket.on("new message", onNewMessage);
+		mSocket.on("new image", onNewImage);
 		mSocket.on("new user", onNewUser);
 		mSocket.on("disconnect", onDisconnect);
 		mSocket.emit("new user", "");
@@ -137,18 +180,49 @@ public class ChatActivity extends Activity {
 		
 		String message = editText.getText().toString().trim();
 	    if (TextUtils.isEmpty(message)) {
+	    	Toast.makeText(activity, "Please input message!", Toast.LENGTH_LONG).show();
 	        return;
 	    }  
 				
         editText.setText("");  
-        String date = getDate();
         StringBuffer sb = new StringBuffer(nickName);
-        sb.append(" (");
-        sb.append(date);
-        sb.append(") : ");
+        sb.append(":");
         sb.append(message);
         mSocket.emit("new message", sb.toString());
 	}
+	
+	private void sendImage() {
+		Intent album = new Intent(Intent.ACTION_GET_CONTENT);
+		album.setType("image/*");
+		startActivityForResult(album, CAMERA_SELECT);
+		
+	}
+	
+	@Override  
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
+        super.onActivityResult(requestCode, resultCode, data); 
+        if (resultCode == RESULT_OK) {  
+            switch (requestCode) {  
+            case CAMERA_SELECT:  
+            	ContentResolver resolver = getContentResolver(); 
+                // image address  
+                Uri imgUri = data.getData();  
+                try {
+                	Bitmap photo = MediaStore.Images.Media.getBitmap(resolver,  
+                            imgUri);
+                	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                	photo.compress(Bitmap.CompressFormat.JPEG, 90, outputStream );
+                    byte imageData[] = outputStream.toByteArray();
+                    // Converting Image byte array into Base64 String
+                    String imageDataString = Base64.encodeToString(imageData, Base64.DEFAULT);
+                    mSocket.emit("new image", imageDataString);
+                }catch (Exception e){
+                	e.printStackTrace();
+                }
+                break;  
+            }  
+        }  
+    }  
 
 	@SuppressLint("SimpleDateFormat")
 	protected String getDate() {

@@ -22,8 +22,45 @@
     	android:text="@string/button_name"/> 
     	
     <TextView 
-        android:id="@+id/targetUrl"
+        android:id="@+id/about"
         android:layout_width="wrap_content"  
-    	android:layout_height="wrap_content"/> 
+    	android:layout_height="wrap_content"
+    	android:layout_gravity="center"
+    	android:textStyle="bold"
+    	android:textSize="25sp"
+    	android:text="@string/about"
+    	android:layout_marginTop="30dp"/> 
+    
+    <TextView 
+        android:id="@+id/member1"
+        android:layout_width="wrap_content"  
+    	android:layout_height="wrap_content"
+    	android:layout_gravity="center"
+    	android:textSize="20sp"
+    	android:text="@string/member1"
+    	android:layout_marginTop="10dp"/> 
+    <TextView 
+        android:id="@+id/member2"
+        android:layout_width="wrap_content"  
+    	android:layout_height="wrap_content"
+    	android:layout_gravity="center"
+    	android:textSize="20sp"
+    	android:text="@string/member2"/> 
+    <TextView 
+        android:id="@+id/member3"
+        android:layout_width="wrap_content"  
+    	android:layout_height="wrap_content"
+    	android:layout_gravity="center"
+    	android:textSize="20sp"
+    	android:text="@string/member3"/>
+    
+    <TextView 
+        android:id="@+id/github"
+        android:layout_width="wrap_content"  
+    	android:layout_height="wrap_content"
+    	android:layout_gravity="center"
+    	android:textSize="12sp"
+    	android:layout_marginTop="10dp"
+    	android:text="@string/github"/>
     	
 </LinearLayout>
