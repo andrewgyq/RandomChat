@@ -69,21 +69,23 @@ public class ChatActivity extends Activity {
 	    		 @Override
 	             public void run() {
 	    			chatView = (ListView) findViewById(R.id.ChatView);
-	    			StringBuffer sb = new StringBuffer(nickName);
+	    			String message = (String) args[0];
+	    			StringBuffer sb = null;
+	    			int layout;
+	    			if(nickName.equals(message.split(":")[0])){
+	    				sb = new StringBuffer(nickName);
+	    				layout = R.layout.sender_layout;
+	    			}else{
+	    				sb = new StringBuffer(message.split(":")[0]);
+	    				layout = R.layout.receiver_layout;
+	    			}
+	    			
 	    			sb.append(" (");
 	    			sb.append(getDate());
 	    			sb.append("): ");
-	    			String message = (String) args[0];
-	    			ChatMessage chatMessage = null;
-    		    	if(nickName.equals(message.split(":")[0])){
-    		    		chatMessage = new ChatMessage(sb.toString(), 
-    		    				message.split(":")[1], null, R.layout.sender_layout); 
-    		    	}
-    		    	else{
-    		    		chatMessage = new ChatMessage(sb.toString(), 
-    		    				message.split(":")[1], null, R.layout.receiver_layout);
-    		    	}
-    		    			 
+	    			
+	    			ChatMessage chatMessage = new ChatMessage(sb.toString(), 
+		    				message.split(":")[1], null, layout);
     		        list.add(chatMessage);
     		        chatView.setAdapter(new ChatMessageViewAdapter(ChatActivity.this,list)); 
 	    		 }
@@ -98,14 +100,20 @@ public class ChatActivity extends Activity {
 	    		 @Override
 	             public void run() {
 	    			 chatView = (ListView) findViewById(R.id.ChatView);
-	    			 StringBuffer sb = new StringBuffer(nickName);
+	    			 String message = (String)args[0];
+	    			 StringBuffer sb = new StringBuffer(message.split(":")[0]);
 	    			 sb.append(" (");
 	    			 sb.append(getDate());
 	    			 sb.append("): ");
-	    			 byte[] imageByte = Base64.decode((String)args[0], Base64.DEFAULT);
+	    			 byte[] imageByte = Base64.decode(message.split(":")[1], Base64.DEFAULT);
 	    			 Bitmap bitmap = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length);
-	    			 ChatMessage chatMessage = new ChatMessage(sb.toString(), 
-     		        		null, bitmap, R.layout.sender_layout); ;
+	    			 ChatMessage chatMessage = null;
+	    			 if(nickName.equals(message.split(":")[0]))
+	    				 chatMessage = new ChatMessage(sb.toString(), 
+	    						 null, bitmap, R.layout.sender_layout); 
+	    			 else
+	    				 chatMessage = new ChatMessage(sb.toString(), 
+	    						 null, bitmap, R.layout.receiver_layout);
 	    		     list.add(chatMessage);
 	    		     chatView.setAdapter(new ChatMessageViewAdapter(ChatActivity.this,list)); 
 	    		 }
@@ -215,7 +223,7 @@ public class ChatActivity extends Activity {
                     byte imageData[] = outputStream.toByteArray();
                     // Converting Image byte array into Base64 String
                     String imageDataString = Base64.encodeToString(imageData, Base64.DEFAULT);
-                    mSocket.emit("new image", imageDataString);
+                    mSocket.emit("new image", nickName + ":" + imageDataString);
                 }catch (Exception e){
                 	e.printStackTrace();
                 }

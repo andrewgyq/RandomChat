@@ -24,8 +24,9 @@
 			
    	<ImageView
         android:id="@+id/messagedetail_row_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_marginTop="20dp"
+		android:layout_width="150dp"
+		android:layout_height="150dp"
         android:contentDescription="@string/app_name" />
          
 </RelativeLayout>  

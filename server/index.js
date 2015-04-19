@@ -75,6 +75,28 @@ io.on('connection', function(socket){
   			}
 		}
   	});
+
+  	socket.on('private image', function(msg) {
+  		var clientIP = socket.handshake.address;
+  		var targetIP = socketMap[clientIP];
+  		for(var index in io.sockets.sockets){
+  			console.log('targetIP= ' + targetIP);
+  			console.log('currentIP= ' + io.sockets.sockets[index].conn.remoteAddress);
+  			if(io.sockets.sockets[index].conn.remoteAddress == targetIP){
+  				console.log('true');
+				console.log(msg);
+  				io.sockets.sockets[index].emit('private image', msg);
+  				break;
+  			}
+		}
+  	});
+
+  	socket.on('private leave', function(msg) {
+  		var clientIP = socket.handshake.address;
+  		var targetIP = socketMap[clientIP];
+  		delete socketMap[clientIP];
+  		delete socketMap[targetIP];
+  	});
 });
 
 
