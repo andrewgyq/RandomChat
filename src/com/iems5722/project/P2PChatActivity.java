@@ -1,6 +1,7 @@
 package com.iems5722.project;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,7 +22,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -49,6 +53,10 @@ public class P2PChatActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_p2p_chat);
+		 // show overflow button
+        setOverflowButtonAlways();
+        // hide app icon
+		getActionBar().setDisplayShowHomeEnabled(false);
 		activity = this;
 		activity.setTitle("Private Chat");
 		Intent intent = getIntent();
@@ -72,6 +80,7 @@ public class P2PChatActivity extends Activity {
 		
 		mSocket.on("private", onPrivate);
 		mSocket.on("private image", onPrivateImage);
+		mSocket.on("private leave", onPrivateLeave);
 		mSocket.connect();
 	}
 	
@@ -200,11 +209,58 @@ public class P2PChatActivity extends Activity {
 	    }
 	};
 	
+	private Emitter.Listener onPrivateLeave = new Emitter.Listener() {
+	    @Override
+	    public void call(final Object... args) {
+	    	activity.runOnUiThread(new Runnable() {
+	    		 @Override
+	             public void run() {
+	    			 if(nickName.equals((String)args[0])){
+	    				 return;
+	    			 }else{
+	    				 Toast.makeText(activity,  (String)args[0] + " is disconnected", Toast.LENGTH_LONG).show();
+	    				 mSocket.off("private", onPrivate);
+	    				 activity.finish();
+	    			 }
+	    		 }
+	    	});
+	    }
+	};
+	
+	
 	@Override
 	public void onDestroy() {
 	    super.onDestroy();
-	    mSocket.emit("private leave", "");
-	    mSocket.disconnect();
 	    mSocket.off("private", onPrivate);
+	    activity.finish();
+	}
+	
+	private void setOverflowButtonAlways(){
+		try{
+			ViewConfiguration config = ViewConfiguration.get(this);
+			Field menuKey = ViewConfiguration.class
+					.getDeclaredField("sHasPermanentMenuKey");
+			menuKey.setAccessible(true);
+			menuKey.setBoolean(config, false);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu){
+		getMenuInflater().inflate(R.menu.p2pchat, menu);
+		return true;
+	}
+	
+	public boolean onOptionsItemSelected (MenuItem item){
+		switch(item.getItemId()){  
+        case R.id.action_exit:  
+        	mSocket.emit("private leave", nickName);
+        	mSocket.off("private", onPrivate);
+    	    activity.finish();
+            break;  
+        }  
+        return true;
 	}
 }

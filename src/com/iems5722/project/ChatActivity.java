@@ -139,6 +139,7 @@ public class ChatActivity extends Activity {
 	    	activity.runOnUiThread(new Runnable() {
 	    		 @Override
 	             public void run() {
+	    			 Toast.makeText(activity, "Someone is disconnected!", Toast.LENGTH_LONG).show();
 	    			 activity.setTitle("Online User: " + args[0]);
 	    		 }
 	    	});

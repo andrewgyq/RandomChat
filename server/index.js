@@ -94,6 +94,12 @@ io.on('connection', function(socket){
   	socket.on('private leave', function(msg) {
   		var clientIP = socket.handshake.address;
   		var targetIP = socketMap[clientIP];
+  		for(var index in io.sockets.sockets){
+	  		if(io.sockets.sockets[index].conn.remoteAddress == targetIP){
+	  			io.sockets.sockets[index].emit('private leave', msg);
+	  			break;
+	  		}
+	  	}
   		delete socketMap[clientIP];
   		delete socketMap[targetIP];
   	});
